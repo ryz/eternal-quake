@@ -22,6 +22,7 @@ void() W_Precache =
 	precache_sound ("weapons/grenade.wav");	// grenade launcher
 	precache_sound ("weapons/bounce.wav");		// grenade bounce
 	precache_sound ("weapons/shotgn2.wav");	// super shotgun
+	precache_sound ("weapons/ssg.wav");	// super shotgun alt
 };
 
 float() crandom =
@@ -291,7 +292,7 @@ void() W_FireSuperShotgun =
 		return;
 	}
 		
-	sound (self ,CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);	
+	sound (self ,CHAN_WEAPON, "weapons/ssg.wav", 1, ATTN_NORM);	
 
 	self.punchangle_x = -4;
 	
