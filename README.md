@@ -2,7 +2,7 @@
 Mod for Quake. Modern source port like QuakeSpasm recommended.
 
 
-## Info ## 
+## Info ##
 
 Based on the original QuakeC source files "progs106" from id, 1996.
 
