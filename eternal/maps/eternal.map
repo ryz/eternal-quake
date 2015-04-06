@@ -1,7 +1,7 @@
 {
 "spawnflags" "0"
 "classname" "worldspawn"
-"wad" "D:\games\quake\quakespasm-0.90.0_win64\id1\quake.wad"
+"wad" "..\..\wads\quake.wad;..\..\wads\decon.wad;..\..\wads\DktE1.wad"
 "_sunlight" "255"
 "sky" "purple_"
 "_sunlight3" "60"
