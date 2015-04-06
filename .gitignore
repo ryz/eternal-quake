@@ -1,2 +1,10 @@
+# General files
 *.exe
+*.log
+
+# Generated mapping files
+*.bsp
+*.prt
+
+# Compiled QuakeC bytecode
 *.dat
