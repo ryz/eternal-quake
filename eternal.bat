@@ -1,3 +1,5 @@
+@echo off
+
 REM eternal.bat - by Steve "ryz" Hassenpflug <ryzawy@gmail.com>
 REM Small batch file that compiles the QuakeC code and launches a source port (aka the game),
 REM instantly starts a map and executes a custom config for debugging
