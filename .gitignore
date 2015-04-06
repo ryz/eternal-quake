@@ -5,6 +5,7 @@
 # Generated mapping files
 *.bsp
 *.prt
+*.lit
 
 # Compiled QuakeC bytecode
 *.dat
