@@ -29,4 +29,4 @@ REM Launch source port with the mod, start map and execute the debug config
 
 cd ..\..
 
-quakespasm.exe -game eternal +map e1m1 +exec debug.cfg
+quakespasm.exe -game eternal +map eternal +exec debug.cfg
