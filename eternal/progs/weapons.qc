@@ -366,21 +366,11 @@ void() T_MissileTouch =
 };
 
 
-
-/*
-================
-W_FireRocket
-================
-*/
-void() W_FireRocket =
+void(float velocityMult, float offset) RocketLaunch = 
 {
-	local	entity missile, mpuff;
-	
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
-	
-	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
-
-	self.punchangle_x = -2;
+	local entity missile, mpuff;
+	local vector aimangle;
+        local float velocityMult, offset;
 
 	missile = spawn ();
 	missile.owner = self;
@@ -391,19 +381,40 @@ void() W_FireRocket =
 // set missile speed	
 
 	makevectors (self.v_angle);
-	missile.velocity = aim(self, 1000);
-	missile.velocity = missile.velocity * 1000;
+	//missile.velocity = aim(self, velocityMult);
+	missile.velocity = v_forward * velocityMult - v_right * offset * 8;
+//	missile.velocity = missile.velocity * velocityMult;
 	missile.angles = vectoangles(missile.velocity);
 	
 	missile.touch = T_MissileTouch;
 	
 // set missile duration
-	missile.nextthink = time + 5;
+	missile.nextthink = time + 10;
 	missile.think = SUB_Remove;
 
 	setmodel (missile, "progs/missile.mdl");
 	setsize (missile, '0 0 0', '0 0 0');		
 	setorigin (missile, self.origin + v_forward*8 + '0 0 16');
+    
+};
+
+/*
+================
+W_FireRocket
+================
+*/
+void() W_FireRocket =
+{
+	
+	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	
+	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
+
+	self.punchangle_x = -2;
+
+        RocketLaunch(1000, 0);
+        RocketLaunch(1000, 10);
+        RocketLaunch(1000, -10);
 };
 
 /*
