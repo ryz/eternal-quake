@@ -326,6 +326,8 @@ void() sham_die =
 
 /*QUAKED monster_shambler (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 */
+/*QUAKED monster_shambler2 (1 0 0) (-32 -32 -24) (32 32 64) Ambush
+*/
 void() monster_shambler =
 {
 	if (deathmatch)
@@ -351,6 +353,47 @@ void() monster_shambler =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	setmodel (self, "progs/shambler.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	self.health = 600;
+
+	self.th_stand = sham_stand1;
+	self.th_walk = sham_walk1;
+	self.th_run = sham_run1;
+	self.th_die = sham_die;
+	self.th_melee = sham_melee;
+	self.th_missile = sham_magic1;
+	self.th_pain = sham_pain;
+	
+	walkmonster_start();
+};
+
+
+void() monster_shambler2 =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/shambler_putrid.mdl");
+	precache_model ("progs/s_light.mdl");
+	precache_model ("progs/h_shams.mdl");
+	precache_model ("progs/bolt.mdl");
+	
+	precache_sound ("shambler/sattck1.wav");
+	precache_sound ("shambler/sboom.wav");
+	precache_sound ("shambler/sdeath.wav");
+	precache_sound ("shambler/shurt2.wav");
+	precache_sound ("shambler/sidle.wav");
+	precache_sound ("shambler/ssight.wav");
+	precache_sound ("shambler/melee1.wav");
+	precache_sound ("shambler/melee2.wav");
+	precache_sound ("shambler/smack.wav");
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+	setmodel (self, "progs/shambler_putrid.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 600;
