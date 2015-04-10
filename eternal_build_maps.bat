@@ -19,7 +19,7 @@ echo.
 
 echo Calculating lightmaps...
 for %%F in (*.bsp) do (
-    light "%%F"
+    light -extra4 "%%F"
     echo.
 )
 echo Done!
