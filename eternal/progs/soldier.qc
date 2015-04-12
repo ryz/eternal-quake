@@ -282,3 +282,46 @@ void() monster_army =
 
 	walkmonster_start ();
 };
+
+
+void() monster_army_rocket =
+{	
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/soldier.mdl");
+	precache_model ("progs/h_guard.mdl");
+	precache_model ("progs/gib1.mdl");
+	precache_model ("progs/gib2.mdl");
+	precache_model ("progs/gib3.mdl");
+
+	precache_sound ("soldier/death1.wav");
+	precache_sound ("soldier/idle.wav");
+	precache_sound ("soldier/pain1.wav");
+	precache_sound ("soldier/pain2.wav");
+	precache_sound ("soldier/sattck1.wav");
+	precache_sound ("soldier/sight1.wav");
+
+	precache_sound ("player/udeath.wav");		// gib death
+
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/soldier.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	self.health = 60;
+        self.skin = 1;
+
+	self.th_stand = army_stand1;
+	self.th_walk = army_walk1;
+	self.th_run = army_run1;
+	self.th_missile = army_atk1;
+	self.th_pain = army_pain;
+	self.th_die = army_die;
+
+	walkmonster_start ();
+};
