@@ -24,9 +24,4 @@ for %%F in (*.bsp) do (
 )
 echo Done!
 echo.
-
-REM Launch source port with the mod, start map and execute the debug config 
-
 cd ..\..
-
-quakespasm.exe -game eternal +map eternal +exec debug.cfg
