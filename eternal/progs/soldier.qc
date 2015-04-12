@@ -6,33 +6,44 @@ SOLDIER / PLAYER
 ==============================================================================
 */
 
+// The next four lines are not read by QCC
 $cd id1/models/soldier3
 $origin 0 -6 24
 $base base		
 $skin skin
 
+// asm 0-7
 $frame stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8
 
+// asm 8-17
 $frame death1 death2 death3 death4 death5 death6 death7 death8
 $frame death9 death10
 
+// asm 18-28
 $frame deathc1 deathc2 deathc3 deathc4 deathc5 deathc6 deathc7 deathc8
 $frame deathc9 deathc10 deathc11
 
+// asm 29-39
 $frame load1 load2 load3 load4 load5 load6 load7 load8 load9 load10 load11
 
+// asm 40-45
 $frame pain1 pain2 pain3 pain4 pain5 pain6
 
+// asm 46-59
 $frame painb1 painb2 painb3 painb4 painb5 painb6 painb7 painb8 painb9 painb10
 $frame painb11 painb12 painb13 painb14
 
+// asm 60-72
 $frame painc1 painc2 painc3 painc4 painc5 painc6 painc7 painc8 painc9 painc10
 $frame painc11 painc12 painc13
 
+// asm 73-80
 $frame run1 run2 run3 run4 run5 run6 run7 run8
 
+// asm 81-89
 $frame shoot1 shoot2 shoot3 shoot4 shoot5 shoot6 shoot7 shoot8 shoot9
 
+// asm 90
 $frame prowl_1 prowl_2 prowl_3 prowl_4 prowl_5 prowl_6 prowl_7 prowl_8
 $frame prowl_9 prowl_10 prowl_11 prowl_12 prowl_13 prowl_14 prowl_15 prowl_16
 $frame prowl_17 prowl_18 prowl_19 prowl_20 prowl_21 prowl_22 prowl_23 prowl_24
@@ -94,12 +105,36 @@ void()	army_run6	=[	$run6,		army_run7	] {ai_run(15);};
 void()	army_run7	=[	$run7,		army_run8	] {ai_run(10);};
 void()	army_run8	=[	$run8,		army_run1	] {ai_run(8);};
 
+// rocketeer back walk
+// this is called when the player is too close to the rocketeer
+void() army_back1       =[      $run8,          army_back2      ] 
+{
+    ai_face();
+    ai_pain(8);
+};
+void() army_back2       =[      $run7,          army_back3      ] {ai_face();ai_pain(10);};
+void() army_back3       =[      $run6,          army_back4      ] {ai_face();ai_pain(15);};
+void() army_back4       =[      $run5,          army_back5      ] {ai_face();ai_pain(8);};
+void() army_back5       =[      $run4,          army_back6      ] {ai_face();ai_pain(10);};
+void() army_back6       =[      $run3,          army_back7      ] {ai_face();ai_pain(10);};
+void() army_back7       =[      $run2,          army_back8      ] {ai_face();ai_pain(15);};
+void() army_back8       =[      $run1,          army_run1       ]
+{
+    ai_face();
+    ai_pain(11);
+    self.attack_finished = time + 0;
+};
+
 void()	army_atk1	=[	$shoot1,	army_atk2	] {ai_face();};
 void()	army_atk2	=[	$shoot2,	army_atk3	] {ai_face();};
 void()	army_atk3	=[	$shoot3,	army_atk4	] {ai_face();};
 void()	army_atk4	=[	$shoot4,	army_atk5	] {ai_face();};
-void()	army_atk5	=[	$shoot5,	army_atk6	] {ai_face();army_fire();
-self.effects = self.effects | EF_MUZZLEFLASH;};
+void()	army_atk5	=[	$shoot5,	army_atk6	] 
+{
+    ai_face();
+    army_fire();
+    self.effects = self.effects | EF_MUZZLEFLASH;
+};
 void()	army_atk6	=[	$shoot6,	army_atk7	] {ai_face();};
 void()	army_atk7	=[	$shoot7,	army_atk8	] {ai_face();SUB_CheckRefire (army_atk1);};
 void()	army_atk8	=[	$shoot8,	army_atk9	] {ai_face();};
@@ -122,11 +157,11 @@ void()	army_painb6	=[	$painb6,	army_painb7	] {};
 void()	army_painb7	=[	$painb7,	army_painb8	] {};
 void()	army_painb8	=[	$painb8,	army_painb9	] {};
 void()	army_painb9	=[	$painb9,	army_painb10] {};
-void()	army_painb10=[	$painb10,	army_painb11] {};
-void()	army_painb11=[	$painb11,	army_painb12] {};
-void()	army_painb12=[	$painb12,	army_painb13] {ai_pain(2);};
-void()	army_painb13=[	$painb13,	army_painb14] {};
-void()	army_painb14=[	$painb14,	army_run1	] {};
+void()	army_painb10    =[	$painb10,	army_painb11] {};
+void()	army_painb11    =[	$painb11,	army_painb12] {};
+void()	army_painb12    =[	$painb12,	army_painb13] {ai_pain(2);};
+void()	army_painb13    =[	$painb13,	army_painb14] {};
+void()	army_painb14    =[	$painb14,	army_run1	] {};
 
 void()	army_painc1	=[	$painc1,	army_painc2	] {};
 void()	army_painc2	=[	$painc2,	army_painc3	] {ai_pain(1);};
@@ -141,6 +176,39 @@ void()	army_painc10=[	$painc10,	army_painc11] {ai_painforward(3);};
 void()	army_painc11=[	$painc11,	army_painc12] {ai_painforward(6);};
 void()	army_painc12=[	$painc12,	army_painc13] {ai_painforward(8);};
 void()	army_painc13=[	$painc13,	army_run1] {};
+
+
+// rocketeer stuff
+
+// cock the weapon
+void() army_rocket_atk1 =[ $load1, army_rocket_load2 ]
+{
+    ai_face();
+    sound(self, CHAN_VOICE, "soldier/load.wav", 1, ATTN_NORM);
+   // ai_shotcheck();
+};
+void() army_rocket_load2 =[ $load2, army_rocket_load3 ] {ai_face();};
+void() army_rocket_load3 =[ $load3, army_rocket_load4 ] {ai_face();};
+void() army_rocket_load4 =[ $load4, army_rocket_load5 ] {ai_face();};
+void() army_rocket_load5 =[ $load5, army_rocket_load6 ] {ai_face();};
+void() army_rocket_load6 =[ $load6, army_rocket_load7 ] {ai_face();};
+void() army_rocket_load7 =[ $load7, army_rocket_load8 ] {ai_face();};
+void() army_rocket_load8 =[ $load8, army_rocket_load9 ] {ai_face();};
+void() army_rocket_load9 =[ $load9, army_rocket_load10 ] {ai_face();};
+void() army_rocket_load10 =[ $load10, army_rocket_load11 ] {ai_face();};
+void() army_rocket_load11 =[ $load11, army_rocket_atk5 ] {ai_face();};
+// shoot missile
+void() army_rocket_atk5 =[ $shoot5, army_rocket_atk6 ] 
+{
+    ai_face();
+    army_fire();
+    self.effects = self.effects | EF_MUZZLEFLASH;
+};
+void() army_rocket_atk6 =[ $shoot6, army_rocket_atk7 ] {};
+void() army_rocket_atk7 =[ $shoot7, army_rocket_atk8 ] {};
+void() army_rocket_atk8 =[ $shoot8, army_rocket_atk9 ] {};
+void() army_rocket_atk9 =[ $shoot9, army_run1 ] {};
+
 
 void(entity attacker, float damage)	army_pain =
 {
@@ -221,6 +289,11 @@ void()	army_cdie11	=[	$deathc11,	army_cdie11	] {};
 void() army_die =
 {
 // check for gib
+        if (self.classname = "monster_army_rocket")
+        {
+            // TODO: Add h_guard.mdl skin and change skin to 1
+            self.skin = 0;
+        }
 	if (self.health < -35)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
@@ -304,6 +377,11 @@ void() monster_army_rocket =
 	precache_sound ("soldier/sattck1.wav");
 	precache_sound ("soldier/sight1.wav");
 
+        // new rocket grunt sounds
+        precache_sound ("soldier/load.wav");
+        precache_sound ("soldier/rocket.wav");
+        precache_sound ("dguard/hit.wav");
+
 	precache_sound ("player/udeath.wav");		// gib death
 
 
@@ -319,9 +397,12 @@ void() monster_army_rocket =
 	self.th_stand = army_stand1;
 	self.th_walk = army_walk1;
 	self.th_run = army_run1;
-	self.th_missile = army_atk1;
+	//self.th_missile = army_atk1;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
+
+        self.th_missile = army_rocket_atk1;
+        self.th_melee = army_back1;
 
 	walkmonster_start ();
 };
