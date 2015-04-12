@@ -376,7 +376,7 @@ void() monster_shambler2 =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/shambler_putrid.mdl");
+	precache_model ("progs/shambler.mdl");
 	precache_model ("progs/s_light.mdl");
 	precache_model ("progs/h_shams.mdl");
 	precache_model ("progs/bolt.mdl");
@@ -393,10 +393,11 @@ void() monster_shambler2 =
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
-	setmodel (self, "progs/shambler_putrid.mdl");
+	setmodel (self, "progs/shambler.mdl");
+        self.skin = 1;
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 600;
+	self.health = 700;
 
 	self.th_stand = sham_stand1;
 	self.th_walk = sham_walk1;
