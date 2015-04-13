@@ -105,25 +105,6 @@ void()	army_run6	=[	$run6,		army_run7	] {ai_run(15);};
 void()	army_run7	=[	$run7,		army_run8	] {ai_run(10);};
 void()	army_run8	=[	$run8,		army_run1	] {ai_run(8);};
 
-// rocketeer back walk
-// this is called when the player is too close to the rocketeer
-void() army_back1       =[      $run8,          army_back2      ] 
-{
-    ai_face();
-    ai_pain(8);
-};
-void() army_back2       =[      $run7,          army_back3      ] {ai_face();ai_pain(10);};
-void() army_back3       =[      $run6,          army_back4      ] {ai_face();ai_pain(15);};
-void() army_back4       =[      $run5,          army_back5      ] {ai_face();ai_pain(8);};
-void() army_back5       =[      $run4,          army_back6      ] {ai_face();ai_pain(10);};
-void() army_back6       =[      $run3,          army_back7      ] {ai_face();ai_pain(10);};
-void() army_back7       =[      $run2,          army_back8      ] {ai_face();ai_pain(15);};
-void() army_back8       =[      $run1,          army_run1       ]
-{
-    ai_face();
-    ai_pain(11);
-    self.attack_finished = time + 0;
-};
 
 void()	army_atk1	=[	$shoot1,	army_atk2	] {ai_face();};
 void()	army_atk2	=[	$shoot2,	army_atk3	] {ai_face();};
@@ -177,37 +158,34 @@ void()	army_painc11=[	$painc11,	army_painc12] {ai_painforward(6);};
 void()	army_painc12=[	$painc12,	army_painc13] {ai_painforward(8);};
 void()	army_painc13=[	$painc13,	army_run1] {};
 
+// ================================================
+// ROCKET GRUNT
+// ================================================
 
-// rocketeer stuff
+// Back walk
+// If the player is too close to the rocketeer,
+// it tries to maintain distance by walking back
 
-// cock the weapon
-void() army_rocket_atk1 =[ $load1, army_rocket_load2 ]
+void() army_back1       =[      $run8,          army_back2      ] 
 {
     ai_face();
-    sound(self, CHAN_VOICE, "soldier/load.wav", 1, ATTN_NORM);
-   // ai_shotcheck();
+    ai_pain(8);
 };
-void() army_rocket_load2 =[ $load2, army_rocket_load3 ] {ai_face();};
-void() army_rocket_load3 =[ $load3, army_rocket_load4 ] {ai_face();};
-void() army_rocket_load4 =[ $load4, army_rocket_load5 ] {ai_face();};
-void() army_rocket_load5 =[ $load5, army_rocket_load6 ] {ai_face();};
-void() army_rocket_load6 =[ $load6, army_rocket_load7 ] {ai_face();};
-void() army_rocket_load7 =[ $load7, army_rocket_load8 ] {ai_face();};
-void() army_rocket_load8 =[ $load8, army_rocket_load9 ] {ai_face();};
-void() army_rocket_load9 =[ $load9, army_rocket_load10 ] {ai_face();};
-void() army_rocket_load10 =[ $load10, army_rocket_load11 ] {ai_face();};
-void() army_rocket_load11 =[ $load11, army_rocket_atk5 ] {ai_face();};
-// shoot missile
-void() army_rocket_atk5 =[ $shoot5, army_rocket_atk6 ] 
+void() army_back2       =[      $run7,          army_back3      ] {ai_face();ai_pain(10);};
+void() army_back3       =[      $run6,          army_back4      ] {ai_face();ai_pain(15);};
+void() army_back4       =[      $run5,          army_back5      ] {ai_face();ai_pain(8);};
+void() army_back5       =[      $run4,          army_back6      ] {ai_face();ai_pain(10);};
+void() army_back6       =[      $run3,          army_back7      ] {ai_face();ai_pain(10);};
+void() army_back7       =[      $run2,          army_back8      ] {ai_face();ai_pain(15);};
+void() army_back8       =[      $run1,          army_run1       ]
 {
     ai_face();
-    army_fire();
-    self.effects = self.effects | EF_MUZZLEFLASH;
+    ai_pain(11);
+    self.attack_finished = time + 0;
+    traceline();
+    army_rocket_atk1();
 };
-void() army_rocket_atk6 =[ $shoot6, army_rocket_atk7 ] {};
-void() army_rocket_atk7 =[ $shoot7, army_rocket_atk8 ] {};
-void() army_rocket_atk8 =[ $shoot8, army_rocket_atk9 ] {};
-void() army_rocket_atk9 =[ $shoot9, army_run1 ] {};
+
 
 
 void(entity attacker, float damage)	army_pain =
@@ -258,7 +236,114 @@ void() army_fire =
 	FireBullets (4, dir, '0.1 0.1 0');
 };
 
+// ROCKET DUDE
 
+void() army_rocket_explode = 
+{
+    //T_RadiusDamage (self, self.owner, 40, other);
+    sound(self, CHAN_AUTO, "dguard/hit.wav", 1, ATTN_NORM);
+
+    // Is this needed?
+    WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+    WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+    WriteCoord (MSG_BROADCAST, self.origin_x);
+    WriteCoord (MSG_BROADCAST, self.origin_y);
+    WriteCoord (MSG_BROADCAST, self.origin_z);
+
+    BecomeExplosion();
+};
+
+void() army_rocket_touch = 
+{
+    if (other == self.owner)
+        return;
+
+    if (pointcontents(self.origin) == CONTENT_SKY)
+    {
+	remove(self);
+	return;
+    }
+
+    // correct? FIXME
+    self.origin = normalize (self.velocity);
+
+    if (other.health)
+    {
+        T_Damage(other, self, self.owner, 20);
+    }
+
+    army_rocket_explode();
+};
+
+void() army_rocket_think = {
+    army_rocket_explode();
+};
+
+void() army_rocket_fire = 
+{
+    local entity newmis;
+
+    sound (self, CHAN_WEAPON, "soldier/rocket.wav", 1, ATTN_NORM);
+    newmis = spawn();
+    newmis.owner = self;
+    // We don't use flymissile here, to mitigate rocket collision with other monsters
+    //newmis.movetype = MOVETYPE_FLYMISSILE;
+    newmis.movetype = MOVETYPE_FLY;
+    newmis.solid = SOLID_BBOX;
+
+    newmis.velocity = normalize(self.enemy.origin - self.origin);
+    newmis.velocity = newmis.velocity * 600;
+
+    // defines rotation spped
+    //newmis.avelocity = '300 300 300';
+
+    newmis.angles = vectoangles(newmis.velocity);
+
+    newmis.touch = army_rocket_touch;
+
+    newmis.nextthink = time + 5;
+    newmis.think = army_rocket_think;
+
+    setmodel (newmis, "progs/missile.mdl");
+    setsize (newmis, '0 0 0', '0 0 0');
+    setorigin (newmis, self.origin);
+};
+
+// Rocket attack
+// Cock the weapon, fake loading of a rocket
+
+void() army_rocket_atk1 =[ $load1, army_rocket_load2 ]
+{
+    ai_face();
+    sound(self, CHAN_VOICE, "soldier/load.wav", 1, ATTN_NORM);
+   // ai_shotcheck();
+};
+void() army_rocket_load2 =[ $load2, army_rocket_load3 ] {ai_face();};
+void() army_rocket_load3 =[ $load3, army_rocket_load4 ] {ai_face();};
+void() army_rocket_load4 =[ $load4, army_rocket_load5 ] {ai_face();};
+void() army_rocket_load5 =[ $load5, army_rocket_load6 ] {ai_face();};
+void() army_rocket_load6 =[ $load6, army_rocket_load7 ] {ai_face();};
+void() army_rocket_load7 =[ $load7, army_rocket_load8 ] {ai_face();};
+void() army_rocket_load8 =[ $load8, army_rocket_load9 ] {ai_face();};
+void() army_rocket_load9 =[ $load9, army_rocket_load10 ] {ai_face();};
+void() army_rocket_load10 =[ $load10, army_rocket_load11 ] {ai_face();};
+void() army_rocket_load11 =[ $load11, army_rocket_atk5 ] {ai_face();};
+
+// Shoot the missile
+void() army_rocket_atk5 =[ $shoot5, army_rocket_atk6 ] 
+{
+    ai_face();
+    army_rocket_fire();
+    // ai_shotcheck();
+    self.effects = self.effects | EF_MUZZLEFLASH;
+};
+void() army_rocket_atk6 =[ $shoot6, army_rocket_atk7 ] {};
+void() army_rocket_atk7 =[ $shoot7, army_rocket_atk8 ] {};
+void() army_rocket_atk8 =[ $shoot8, army_rocket_atk9 ] {};
+void() army_rocket_atk9 =[ $shoot9, army_run1 ] {};
+
+
+// ROCKET GRUNT END
 
 void()	army_die1	=[	$death1,	army_die2	] {};
 void()	army_die2	=[	$death2,	army_die3	] {};
@@ -325,6 +410,8 @@ void() army_die =
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_guard.mdl", self.health);
+
+		// TODO: Change to sophisticated gib-system from quoth
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
@@ -384,6 +471,8 @@ void() monster_army =
 };
 
 
+// ROCKET GRUNT definition
+
 void() monster_army_rocket =
 {	
 	if (deathmatch)
@@ -424,11 +513,13 @@ void() monster_army_rocket =
 	self.th_stand = army_stand1;
 	self.th_walk = army_walk1;
 	self.th_run = army_run1;
-	//self.th_missile = army_atk1;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
 
+        // special rocket attack
         self.th_missile = army_rocket_atk1;
+
+        // in melee range, try to back off
         self.th_melee = army_back1;
 
 	walkmonster_start ();
