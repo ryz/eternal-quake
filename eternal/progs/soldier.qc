@@ -182,8 +182,8 @@ void() army_back8       =[      $run1,          army_run1       ]
     ai_face();
     ai_pain(11);
     self.attack_finished = time + 0;
-    traceline();
-    army_rocket_atk1();
+    //traceline();
+    //army_rocket_atk1();
 };
 
 
@@ -265,7 +265,7 @@ void() army_rocket_touch =
     }
 
     // correct? FIXME
-    self.origin = normalize (self.velocity);
+    //self.origin = normalize (self.velocity);
 
     if (other.health)
     {
